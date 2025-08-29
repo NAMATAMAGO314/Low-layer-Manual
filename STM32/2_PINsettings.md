@@ -19,4 +19,4 @@
 ![a](/images/s_2025-08-29_174240.png)  
 下のようになればOKです。
 ![alt text](image.png)  
-まずはPIN設定をします。
+PIN設定をします。
