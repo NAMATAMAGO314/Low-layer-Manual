@@ -28,6 +28,7 @@ GPIOをクリックして、下の画像にある、黒の三角を押すと隠�
 これは、このマイコンで行う制御の、タイマーや周波数の大本の設定画面です。画面左下にあるHSEおよびHSIは、それぞれ、
 - High Speed Internal oscillator(内部水晶振動子)
 - High Speed External oscillator(外部水晶振動子)  
+
 のことです。外部のほうが内部の物よりも精度がいいと言われているので、基本的にはHSEを選択しておきましょう。
 ![alt text](/images/image-6.png)  
 画面右端にあるAPB1 Timerclocksを見ると、デフォルトでは84になっていますが、先ほどHSEを選択したので42になっているはずです(下の画像はHSE設定前)。  
