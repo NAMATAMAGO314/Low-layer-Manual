@@ -52,6 +52,10 @@ GPIOをクリックして、下の画像にある、黒の三角を押すと隠�
 
 ![alt text](rimage-6.png)  
 
+下の画像のように、画面左のInput frequencyを20に、PLL Source Mux の右にあるPLLMを/10にしておきましょう。  
+
+![alt text](image-7.png)
+
 画面右端にあるAPB1 Timerclocksを見ると、デフォルトでは84になっていますが、先ほどHSEを選択したので42になっているはずです(下の画像はHSE設定前)。  
 
 ![alt text](rimage-7.png)  
