@@ -91,4 +91,4 @@ C言語を詳しく学べるサイトです。
 
 あいうえお
 
-![gpio_2025-09-01-14-10-26_${YYYYMMDDHHmmss}](./images/gpio_2025-09-01-14-10-26_${YYYYMMDDHHmmss}.png)
+![gpio_2025-09-01-14-18-18](./images/gpio_2025-09-01-14-18-18.png)
