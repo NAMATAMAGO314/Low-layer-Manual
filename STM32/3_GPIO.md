@@ -67,5 +67,28 @@ GPIOをクリックして、下の画像にある、黒の三角を押すと隠�
 Do you want to generate Code?の画面で、Remember my decisionにチェックを入れずに右下のYesを押すと、下の画像の様なものが出てきます。これは、コードの編集画面を表示するかどうかを聞いています。Yesを押すとコーディング画面に、Noを押すと、PIN設定を保存し、それに応じたコードを生成し、コーディング画面には移動せずにPIN設定の画面のままになります。どちらを押そうが結局はコーディング画面を後で開けるのでYesを押しましょう。Remember my decisionについては先ほどと同じような感じです。  
 
 ![alt text](/images/image-10.png)  
+## コーディングをしよう  
+Yesを押してしばらく経つと、下の画像のように、コーディング画面が出てきます。いよいよコードを書いていきます。  
 
+![alt text](image.png)  
 
+ここからは、GPIOで基板のLED1～3を光らせるコードを書いていきます。C言語及びC++で書いていきますが、C言語の知識がないよ～(;´д｀)トホホという方は、下に載せておく外部リンクに飛んでお勉強してから戻ってきてください。成長したあなたをお待ちしております。 
+
+- [苦しんで覚えるC言語](https://9cguide.appspot.com/index.html)  
+C言語を詳しく学べるサイトです。  
+- [C++入門 AtCoder Programming Guide for beginners (APG4b)](https://atcoder.jp/contests/apg4b?_gl=1*11he24b*_ga*MTQ0MTAzNzY2OC4xNzU1ODQzNDY0*_ga_RC512FD18N*czE3NTY3MDE5OTAkbzQkZzEkdDE3NTY3MDE5OTMkajU3JGwwJGgw)  
+競技プログラミング用のサイトで提供されている学習サイトです。因みに著者はこのサイトでC言語を学びました。  
+
+さて、いよいよコーディングをするわけですが、下の画像のように、画面左にあるProject Explorerを見てください。  
+
+![alt text](image-1.png)  
+
+ここには、現在自分が持っているプロジェクトの一覧が出ています。  
+フォルダ名の横にある、「>」こんな感じのマークを押すと、その中にあるフォルダ一覧が出てきます。先ほどの画像のように、test_play→Core→Srcとクリックしていくと、Srcの真下にmain.cという名前のファイルがあります。  「.c」というのは、このファイルがC言語で書いてあるということを表しています。ここを右クリックすると、下の画像のように、ファイルに対する操作が出てきます。  
+このうち、Renameをクリックすると、New nameと出てくるので、main.cを、main.cppに書き換えて、OKを押してください。なぜ名前を変えるのかは次回お話しします。
+
+![alt text](image-2.png)![alt text](image-3.png)
+
+あいうえお
+
+![gpio_2025-09-01-14-10-26_${YYYYMMDDHHmmss}](./images/gpio_2025-09-01-14-10-26_${YYYYMMDDHHmmss}.png)
