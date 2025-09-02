@@ -80,8 +80,8 @@ PA3,5,6それぞれタイマーを決めると、PINの長方形が灰色から�
 まず、大本のクロックの周波数がAPB1 timer clocksの値であり、今回の場合は60MHzです。そして、Prescalerは「APB1 timer clocksを遅らせて、使いやすくするための値」です。この値が大きいほど、TIMが使うタイマークロックのスピードが遅くなります。  
 次に、Counter Periodは、「APB1 timer clocksをPrescalerを使って遅らせて出来上がったタイマークロックの周波数を決める値」です。この値が大きいほど周波数が高くなります。  
 APB1 timer clocksの50MHzでは周波数が高すぎるので、これらで使いやすい速さにしているのです。最終的なTIMの周波数fを表す式は、  
-\[
+$$
 f = \frac{APB1 timer clocks}{(Prescaler+1)\times(CounterPeriod+1)}
-\]  
+$$
 です。
 
