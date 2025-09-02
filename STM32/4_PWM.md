@@ -41,7 +41,7 @@ PA5のところをクリックし、TIM2_CH1を選択します。PWM制御では
 ![alt text](image-15.png)  
 
 PA3,5,6それぞれタイマーを決めると、PINの長方形が灰色から黄色に変わりました。これは、「PINの機能は決まったけど数値が決まってないよ」という状態です。前回のGPIOではそのような数値は必要なかったのでPINの機能を決めたら緑色になっていました。  
-ここでいったん、Clock Configurationのほうを開きます。 
+ここでいったん、Clock Configurationのほうを開きます。  
 
 ![alt text](image-16.png)  
 
@@ -76,4 +76,12 @@ PA3,5,6それぞれタイマーを決めると、PINの長方形が灰色から�
 
 ![alt text](image-23.png)  
 
-ところで、前回はAPB1 timer clocksを50にしました。いまからその理由についてお話します。
+ここで、Counter SettingsのPrescalerを99,Counter Periodを499,APB1 timer clocksを60にした理由をお話しします。  
+まず、大本のクロックの周波数がAPB1 timer clocksの値であり、今回の場合は60MHzです。そして、Prescalerは「APB1 timer clocksを遅らせて、使いやすくするための値」です。この値が大きいほど、TIMが使うタイマークロックのスピードが遅くなります。  
+次に、Counter Periodは、「APB1 timer clocksをPrescalerを使って遅らせて出来上がったタイマークロックの周波数を決める値」です。この値が大きいほど周波数が高くなります。  
+APB1 timer clocksの50MHzでは周波数が高すぎるので、これらで使いやすい速さにしているのです。最終的なTIMの周波数fを表す式は、  
+\[
+f = \frac{APB1 timer clocks}{(Prescaler+1)\times(CounterPeriod+1)}
+\]  
+です。
+
