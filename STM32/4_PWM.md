@@ -4,7 +4,7 @@
 前回のGPIOは、SET(電圧がHigh)とRESET(電圧がLow)、つまりは0か1の極端な制御でした。今回やるPWM制御は、0からMAXまで **Duty比** を変え、滑らかに制御できるかなりいい感じの制御です(小並感)。早速仕組みについてお話します。
 ## そもそもの仕組み
 先ほど出てきました「Duty比」、これが今回の肝です。  
-PWMは、点灯(電圧がHighの状態)と消灯(電圧がLowの状態)を高速に切り替えることによって光を表現して、点灯と消灯の時間の長さを変えることによって、人間の眼では明るさが変わっているように見えるのです。PWM波形は、この点灯時間と消灯時間をセットで一つの周期としており、1周期の中での消灯と点灯の時間の長さの比をDuty比といいます。これが基本的なPWMの仕組みです。  
+PWMは、点灯(電圧がHighの状態)と消灯(電圧がLowの状態)を高速に切り替えることによって光を表現して、点灯と消灯の時間の長さを変えることによって、人間の眼では明るさが変わっているように見えるのです。PWM波形は、この点灯時間と消灯時間をセットで一つの周期としており、1周期の時間の長さと点灯の時間の長さの比をDuty比といいます。これが基本的なPWMの仕組みです。  
 Duty比を実際に動かして理解できる簡単なツールを作ったので、下のリンクからぜひ遊んでみてください。  
 
 [Duty比体験ツール](https://www.desmos.com/calculator/vnzy8slrl3?lang=ja)  
@@ -67,16 +67,16 @@ PA3,5,6それぞれタイマーを決めると、PINの長方形が灰色から�
 
 ![alt text](image-21.png)
 
-大本のクロックは外部クロックですが、TIM2,3はInternal Clock(内部クロック)を使うことで固有の周波数にすることができます。そのため、Clock SourceをInternal Clockに設定したのです。また、PWMGenelationは、その名の通りPWM波形を出力する機能なので、CH1,をそれぞれPWMGenelationに設定しました。  
+大本のクロックは外部クロックですが、TIM2,3はInternal Clock(内部クロック)を使うことで固有の周波数にすることができます。そのため、Clock SourceをInternal Clockに設定したのです。また、PWMGenelationは、その名の通りPWM波形を出力する機能なので、CH1,4をそれぞれPWMGenelationに設定しました。  
 次に、下の画像のように先ほど設定していた場所の下にあるConfigurationの、Parameter Settingsをクリックしてください。そうすると、TIM2に関する様々な数値設定が出てきます。  
 
 ![alt text](image-22.png)  
 
-そしたら、下の画像のようにCounter SettingsのPrescalerを99,Counter Periodを499に設定してください。  
+そしたら、下の画像のようにCounter SettingsのPrescalerを59,Counter Periodを999に設定してください。  
 
 ![alt text](image-23.png)  
 
-ここで、Counter SettingsのPrescalerを99,Counter Periodを499,APB1 timer clocksを60にした理由をお話しします。  
+ここで、Counter SettingsのPrescalerを59,Counter Periodを999,APB1 timer clocksを60にした理由をお話しします。  
 まず、大本のクロックの周波数がAPB1 timer clocksの値であり、今回の場合は60MHzです。そして、Prescalerは「APB1 timer clocksを遅らせて、使いやすくするための値」です。この値が大きいほど、TIMが使うタイマークロックのスピードが遅くなります。  
 次に、Counter Periodは、「APB1 timer clocksをPrescalerを使って遅らせて出来上がったタイマークロックの周波数を決める値」です。この値が大きいほど周波数が高くなります。  
 APB1 timer clocksの50MHzでは周波数が高すぎるので、これらで使いやすい速さにしているのです。最終的なTIMの周波数fを表す式は、  
@@ -84,10 +84,42 @@ APB1 timer clocksの50MHzでは周波数が高すぎるので、これらで使�
 f=(APB1 timer clocks)/((Prescaler+1)(Counter Period+1))  
 
 です。今回の場合だと、計算した結果、fは1KHzになります。これが、TIM2の周波数です。  
-この式では、APB1 timer clocksが割られるので、ここがキリの悪い数字だと計算後の周波数が無限小数になってしまったりします。そのため、APB1 timer clocksは10の倍数にすることを推奨します。  
+この式では、APB1 timer clocksが割られるので、ここがキリの悪い数字だと計算後の周波数が無限小数になってしまったりします。そのため、APB1 timer clocksは10の倍数にすることを推奨します。これぐらいの計算なら手計算でもできると思いますが、計算合ってるかちょっと心配だよという人のために計算ツールを作っておきました。  
+
+[周波数計算機](https://www.desmos.com/calculator/01muv0f9tb?lang=ja)  
+
 そして、下の画像のようにHCLKの下に周波数の最大値が描かれています。HCLKはなるべく最大値に近くなるようにAPB1 timer clocksを設定しましょう。これが前回、「次回お話しします」と言っていたAPB1 timer clocksを50にする理由です。  
 
 ![alt text](image-24.png)  
 
 TIM3も同じ数値で設定して、Ctrl + sで保存し、前回同様いくつかの質問に対してYesを押すとコードが自動生成されます。  
 ## コーディングをしよう
+さて、今回は何度も言いますがPWMでRGBを制御していろんな光を表現します。今回使う関数はこちら  
+`HAL_TIM_PWM_Start(&htim〇, TIM_CHANNEL_～)`と、`__HAL_TIM_SET_COMPARE(&htim〇, TIM_CHANNEL_～, x)`  
+です。どちらもHALライブラリの関数です。  
+HAL_TIM_PWM_Start(&htim〇, TIM_CHANNEL_～)は、PWMに使うタイマーを開始させる関数です。  
+例えば今回のPA6のタイマー(TIM3 CHANNEL_1)の場合、〇には3,～には1が入り、`HAL_TIM_PWM_Start(&htim3, TIM_CHANNEL1)`となります。これでTIM3CHANNEL1のタイマーが開始しました。 
+これは必ず `__HAL_TIM_SET_COMPARE(&htim〇, TIM_CHANNEL_～, x)` よりも前に書いてください。そうしないとタイマーが開始しません。  
+続いて`__HAL_TIM_SET_COMPARE(&htim〇, TIM_CHANNEL_～, x)`  です。この関数は、指定したPINのタイマーに応じてこれぐらいのDuty比で出力します　という関数です。PA6のタイマー(TIM3 CHANNEL_1)の場合、先ほど同様〇には3,～には1が入り、xには点灯時間のカウント数を入れます。  
+Duty比についてですが、xに入る値の最大値は我々が設定したCounter Periodの値によって変わります。Counter Periodの説明は先ほどしましたが、もう少しわかりやすく言うと、「1周期の間に何回カウントするか」ということです。この値が何に使えるかというと、もしもCounter Periodが999だった時、1周期の間に1000カウント(Counter Period+1がカウント数になります。)するので、そのうちの何カウント分光らせるかを考えることができます。  
+例えば1周期のカウント数が1000、Duty比が50%の時は、1000カウントのうち500カウント点灯させることになります。Duty比が1%の時は、1000カウントのうち10カウント点灯させることになります。  
+少しややこしいですが、Duty比(パーセント表記)=100*(x+1)/(Counter Period+1)となります。つまり、xの最大値=Counter Periodなのですが、ややこしい場合はxの最大値=Counter Periodでも最大出力は出るのでこっちを使っても大丈夫です。  
+早速コーディングをしましょう。  
+今回は、Rがフェードイン→フェードアウト→Gがフェードイン→フェードアウト→Bがフェードイン→フェードアウト→RとG同時に最大点灯→消灯→BとG同時に最大点灯→消灯→すべて最大点灯→消灯  
+をやります。前回同様、下の画像のようにmain.cを開きます。  
+
+![alt text](image-25.png)  
+
+タイマー開始の宣言は一度だけでいいので、100行目の、 USER CODE BEGIN 2の下に書きます。下の画像のようになります。  
+
+![alt text](image-26.png)
+
+続いて、111行目あたりにある USER CODE BEGIN 3の下に書いていきます。フェードイン及びフェードアウトは段階的に出力を変えるのでfor文を使います。フェードがゆっくりに見えるようにHAL_Delay()を入れておきましょう。同時点灯は__HAL_TIM_SET_COMPARE(&htim〇, TIM_CHANNEL_～, x)を二行書けばいいので簡単です。  
+あくまでも一例ですが、下の画像のようになります。  
+
+![alt text](image-27.png)  
+
+同時点灯は下の画像のようになります。  
+
+![alt text](image-28.png)
+
