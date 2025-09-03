@@ -74,7 +74,7 @@ PA3,5,6それぞれタイマーを決めると、PINの長方形が灰色から�
 
 そしたら、下の画像のようにCounter SettingsのPrescalerを59,Counter Periodを999に設定してください。  
 
-![alt text](image-23.png)  
+![alt text](image-29.png) 
 
 ここで、Counter SettingsのPrescalerを59,Counter Periodを999,APB1 timer clocksを60にした理由をお話しします。  
 まず、大本のクロックの周波数がAPB1 timer clocksの値であり、今回の場合は60MHzです。そして、Prescalerは「APB1 timer clocksを遅らせて、使いやすくするための値」です。この値が大きいほど、TIMが使うタイマークロックのスピードが遅くなります。  
