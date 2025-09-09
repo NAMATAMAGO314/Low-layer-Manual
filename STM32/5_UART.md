@@ -69,3 +69,40 @@ aは受信したメッセージを入れる変数で、今回はuint8_t型です
 
 ![alt text](image-37.png)
 
+PWMのDuty比はテラタームから送りますが、例えば黄32%,白0%,緑100%の場合は032/000/100というように、余った桁を0で埋め、数字同士を/で区切ったものを送ります。そのため、マイコンは受信データからスラッシュを取り除き、パーセンテージをもとに__HAL_TIM_PWM_Startで設定する点灯カウント数を計算する必要があります。  
+著者が一例として書いたコードは下の通りです。USER CODE BEGIN 4の下に書くコードです。まぁかなり前回と比べてややこしいのでコピペでもいいですが(もちろんPIN番号とかは各々変えて)、コードになれるために自分で書いてもいいでしょう。  
+```cpp
+void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
+  if (huart->Instance == USART2){
+    if(rx_data != '/' && rx_data != '\n' && rx_data != '\r' && j<3){
+    	rxbuffer[i][j] = rx_data;
+    	j++;
+    }else if(j>0 || rx_data == '/'){
+    	rxbuffer[i][j] = '\0';
+    	i++;
+    	j=0;
+    	if(i==3){
+    		for(int num = 0;num<3;num++){
+    			duty[num] = 0;
+    			for(int k=0;k<3;k++){
+    				duty[num] = duty[num]*10 + (rxbuffer[num][k]-'0');
+    			}
+    			if(duty[num]>0){
+    				duty[num] = duty[num] * 10 - 1;
+    			}
+    		}
+    		__HAL_TIM_SET_COMPARE(&htim1, TIM_CHANNEL_1, duty[0]);//Yellow
+            __HAL_TIM_SET_COMPARE(&htim3, TIM_CHANNEL_1, duty[1]);//White
+            __HAL_TIM_SET_COMPARE(&htim2, TIM_CHANNEL_3, duty[2]);//Green
+            char msg[64];
+            sprintf(msg, "successful Y:%d, W:%d, G:%d\r\n",duty[0], duty[1], duty[2]);
+            HAL_UART_Transmit(&huart2, (uint8_t*)msg, strlen(msg), HAL_MAX_DELAY);
+            i=0;
+    	}
+    }
+    HAL_UART_Receive_IT(&huart2, &rx_data, 1);
+  }
+}
+```
+
+ko
