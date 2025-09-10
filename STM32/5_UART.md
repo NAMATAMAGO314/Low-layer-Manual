@@ -118,4 +118,10 @@ void HAL_UART_RxCpltCallback(UART_HandleTypeDef *huart){
 処理が終わったら`HAL_UART_Receive_IT(&huart2, &rx_data, 1);`で次の受信を待ちます。rxbufferなどは66行目あたりの USER CODE BEGIN 0の下で定義しておきましょう。  
 ## Tera Termから送信しよう
 あとはTeraTermの設定を終えれば通信の準備が整います。頑張りましょう。  
-ST-Linkを接続した後にテラターム
+ST-Linkを接続した後にテラタームを起動します。ST-Linkが正しく認識されていると、下の画像のように「新しい接続」の設定画面が出てきます。下のシリアルのところを見ると、COM10の後にST-Linkの名前が表示されます。  
+
+![alt text](image-38.png)
+
+表示されていない場合は、ST-Linkが正しく接続されていない可能性があります。一度テラタームを閉じ、ST-Linkを付けなおしてから起動してみてください。  
+COM10のところは人によって変わります。  
+シリアルを選択し、OKを押したら、下の画像のように設定のところからシリアルポートを選択してください。
